@@ -65,7 +65,7 @@ if [[ "$1" == apache2* ]] || [ "$1" == php-fpm ]; then
 		NONCE_SALT
 	)
 	envs=(
-		WORDPRESS_DB_HOST
+		EXTERNAL_MYSQL_SERVICE_SERVICE_HOST
 		WORDPRESS_DB_USER
 		WORDPRESS_DB_PASSWORD
 		WORDPRESS_DB_NAME
@@ -96,7 +96,7 @@ if [[ "$1" == apache2* ]] || [ "$1" == php-fpm ]; then
 
 	# only touch "wp-config.php" if we have environment-supplied configuration values
 	if [ "$haveConfig" ]; then
-		: "${WORDPRESS_DB_HOST:=mysql}"
+		: "${EXTERNAL_MYSQL_SERVICE_SERVICE_HOST:=mysql}"
 		: "${WORDPRESS_DB_USER:=root}"
 		: "${WORDPRESS_DB_PASSWORD:=}"
 		: "${WORDPRESS_DB_NAME:=wordpress}"
@@ -141,7 +141,7 @@ EOPHP
 			sed -ri -e "s/($start\s*).*($end)$/\1$(sed_escape_rhs "$(php_escape "$value" "$var_type")")\3/" wp-config.php
 		}
 
-		set_config 'DB_HOST' "$WORDPRESS_DB_HOST"
+		set_config 'DB_HOST' "$EXTERNAL_MYSQL_SERVICE_SERVICE_HOST"
 		set_config 'DB_USER' "$WORDPRESS_DB_USER"
 		set_config 'DB_PASSWORD' "$WORDPRESS_DB_PASSWORD"
 		set_config 'DB_NAME' "$WORDPRESS_DB_NAME"
@@ -177,7 +177,7 @@ $stderr = fopen('php://stderr', 'w');
 //   "hostname:port"
 // https://codex.wordpress.org/Editing_wp-config.php#MySQL_Sockets_or_Pipes
 //   "hostname:unix-socket-path"
-list($host, $socket) = explode(':', getenv('WORDPRESS_DB_HOST'), 2);
+list($host, $socket) = explode(':', getenv('EXTERNAL_MYSQL_SERVICE_SERVICE_HOST'), 2);
 $port = 0;
 if (is_numeric($socket)) {
 	$port = (int) $socket;
